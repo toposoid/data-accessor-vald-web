@@ -12,7 +12,7 @@ services:
     image: data-accessor-vald-web:0.4-SNAPSHOT
     tty: true
     environment:
-      - TOPOSOID_VALD_HOST=192.168.33.10
+      - TOPOSOID_VALD_HOST=172.30.0.3
       - TOPOSOID_VALD_PORT=8081
       - TOPOSOID_VALD_DISTANCE_THRESHHOLD=0.05
     networks:
@@ -20,10 +20,15 @@ services:
         ipv4_address: 172.30.0.2
     ports:
       - 9010:9010
+    depends_on:
+      - vald
   vald:
-    image: vdaas/vald-agent-ngt:latest
+    image: vdaas/vald-agent-ngt:v1.6.1
     volumes:
        - ./vald-config:/etc/server
+    networks:
+      app_net:
+        ipv4_address: 172.30.0.3
     ports:
       - 8081:8081
 

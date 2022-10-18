@@ -20,6 +20,8 @@ services:
         ipv4_address: 172.30.0.2
     ports:
       - 9010:9010
+    depends_on:
+      - vald
   vald:
     image: vdaas/vald-agent-ngt:v1.6.1
     volumes:
