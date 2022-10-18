@@ -10,7 +10,7 @@ RUN apt-get update \
 && cd data-accessor-vald-web \
 && git fetch origin ${TARGET_BRANCH} \
 && git checkout ${TARGET_BRANCH} \
-&& pip install --no-cache-dir --trusted-host pypi.python.org -r requirements.txt \
+&& pip install --no-cache-dir --trusted-host pypi.python.org -r requirements.txt
 
 
 COPY ./docker-entrypoint.sh /app/
