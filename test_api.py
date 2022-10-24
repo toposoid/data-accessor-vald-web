@@ -16,38 +16,94 @@
 from fastapi.testclient import TestClient
 from api import app
 from model import VectorInfo, ValdSearchInfo, StatusInfo, ValdSearchResult
+import numpy as np
+import time
 import pytest
 
 class TestVoldAPI(object):
 
     client = TestClient(app)
+    vector = list(np.random.rand(768))
 
-    def setup_method(self,method):
-        print('method={}'.format(method.__name__))
-        response = self.client.post("/delete",
-                            headers={"Content-Type": "application/json"},
-                            json={"id":"test1", "vector": []})        
-        print(StatusInfo.parse_obj(response.json()))
-        response = self.client.post("/delete",
-                            headers={"Content-Type": "application/json"},
-                            json={"id":"test2", "vector": []})        
-        print(StatusInfo.parse_obj(response.json()))
-        response = self.client.post("/delete",
-                            headers={"Content-Type": "application/json"},
-                            json={"id":"test3", "vector": []})        
-        print(StatusInfo.parse_obj(response.json()))
-        response = self.client.post("/delete",
-                            headers={"Content-Type": "application/json"},
-                            json={"id":"test4", "vector": []})        
-        print(StatusInfo.parse_obj(response.json()))
-        response = self.client.post("/delete",
-                            headers={"Content-Type": "application/json"},
-                            json={"id":"test5", "vector": []})        
+    @classmethod
+    def setup_class(cls):
+
+        response = cls.client.post("/insert",
+                        headers={"Content-Type": "application/json"},
+                        json={"id":"test-ss1", "vector": cls.vector})    
         print(StatusInfo.parse_obj(response.json()))
 
+        change3 = cls.vector[3:]
+        changeVector1 = [0.1, 0.2, 0.2]        
+        changeVector1[len(changeVector1):len(changeVector1)] = change3
+        
+        changeVector2 = [0.1, 0.9, 0.3]
+        changeVector2[len(changeVector2):len(changeVector2)] = change3
 
-    def teardown_method(self, method):
-        print('method={}'.format(method.__name__))
+        changeVector3 = [0.1, 0.2, 0.4]        
+        changeVector3[len(changeVector3):len(changeVector3)] = change3
+
+        changeVector4 = [0.11,0.22,0.39]        
+        changeVector4[len(changeVector4):len(changeVector4)] = change3
+
+        response = cls.client.post("/insert",
+                        headers={"Content-Type": "application/json"},
+                        json={"id":"test-ms1", "vector": changeVector1})    
+        assert response.status_code == 200
+        response = cls.client.post("/insert",
+                        headers={"Content-Type": "application/json"},
+                        json={"id":"test-ms2", "vector": changeVector2})    
+        assert response.status_code == 200
+        response = cls.client.post("/insert",
+                        headers={"Content-Type": "application/json"},
+                        json={"id":"test-ms3", "vector": changeVector3})    
+        assert response.status_code == 200
+        response = cls.client.post("/insert",
+                        headers={"Content-Type": "application/json"},
+                        json={"id":"test-ms4", "vector": changeVector3})    
+        assert response.status_code == 200
+        response = cls.client.post("/insert",
+                        headers={"Content-Type": "application/json"},
+                        json={"id":"test-ms5", "vector": changeVector4})    
+        assert response.status_code == 200
+        time.sleep(30)
+
+
+    @classmethod
+    def teardown_class(cls):
+        response = cls.client.post("/delete",
+                            headers={"Content-Type": "application/json"},
+                            json={"id":"test-ss1", "vector": []})        
+        print(StatusInfo.parse_obj(response.json()))
+
+        response = cls.client.post("/delete",
+                            headers={"Content-Type": "application/json"},
+                            json={"id":"test-ms1", "vector": []})        
+        print(StatusInfo.parse_obj(response.json()))
+
+        response = cls.client.post("/delete",
+                            headers={"Content-Type": "application/json"},
+                            json={"id":"test-ms2", "vector": []})        
+        print(StatusInfo.parse_obj(response.json()))
+
+        response = cls.client.post("/delete",
+                            headers={"Content-Type": "application/json"},
+                            json={"id":"test-ms3", "vector": []})        
+        print(StatusInfo.parse_obj(response.json()))
+
+        response = cls.client.post("/delete",
+                            headers={"Content-Type": "application/json"},
+                            json={"id":"test-ms4", "vector": []})        
+        print(StatusInfo.parse_obj(response.json()))
+
+        response = cls.client.post("/delete",
+                            headers={"Content-Type": "application/json"},
+                            json={"id":"test-ms5", "vector": []})        
+        print(StatusInfo.parse_obj(response.json()))
+
+
+
+        
         
     def test_EmptyVector(self):    
         response = self.client.post("/insert",
@@ -69,19 +125,20 @@ class TestVoldAPI(object):
         assert "Incompatible Dimension Size detected" in statusInfo.message
 
     def test_InsertEmptyId(self):    
+        
         response = self.client.post("/insert",
                             headers={"Content-Type": "application/json"},
-                            json={"id":"", "vector": [0.1, 0.2, 0.3]})    
+                            json={"id":"", "vector": self.vector})    
         assert response.status_code == 200
         statusInfo = StatusInfo.parse_obj(response.json())
         assert statusInfo.status == "ERROR"
-        assert "empty uuid" in statusInfo.message
+        assert "UNKNOWN:Error" in statusInfo.message
 
     def test_InsertAndDelete(self):  
         
         response = self.client.post("/insert",
                             headers={"Content-Type": "application/json"},
-                            json={"id":"test1", "vector": [0.1, 0.2, 0.3]})    
+                            json={"id":"test1", "vector": self.vector})    
         assert response.status_code == 200
         statusInfo = StatusInfo.parse_obj(response.json())
         assert statusInfo.status == "OK"
@@ -98,53 +155,30 @@ class TestVoldAPI(object):
 
     def test_SingleSearch(self):     
 
-        response = self.client.post("/insert",
-                        headers={"Content-Type": "application/json"},
-                        json={"id":"test2", "vector": [0.1, 0.2, 0.3]})    
-        assert response.status_code == 200
-        statusInfo = StatusInfo.parse_obj(response.json())
-        assert statusInfo.status == "OK"
-        assert "" in statusInfo.message
-        
         response = self.client.post("/search",
                             headers={"Content-Type": "application/json"},
-                            json={"vector": [0.1, 0.2, 0.3], "num":10, "radius":-1.0, "epsilon":0.01, "timeout": 50000000000})    
+                            json={"vector": self.vector, "num":10, "radius":-1.0, "epsilon":0.01, "timeout": 50000000000})    
         assert response.status_code == 200
         searchResult = ValdSearchResult.parse_obj(response.json())
         assert searchResult.statusInfo.status == "OK"
         assert "" in searchResult.statusInfo.message
-        assert searchResult.ids[0] == "test2"
+        assert searchResult.ids[0] == "test-ss1"
 
     def test_MultiSearch(self):     
 
-        response = self.client.post("/insert",
-                        headers={"Content-Type": "application/json"},
-                        json={"id":"test1", "vector": [0.1, 0.2, 0.2]})    
-        assert response.status_code == 200
-        response = self.client.post("/upsert",
-                        headers={"Content-Type": "application/json"},
-                        json={"id":"test2", "vector": [0.1, 0.2, 0.3]})    
-        assert response.status_code == 200
-        response = self.client.post("/upsert",
-                        headers={"Content-Type": "application/json"},
-                        json={"id":"test3", "vector": [0.1, 0.2, 0.4]})    
-        assert response.status_code == 200
-        response = self.client.post("/upsert",
-                        headers={"Content-Type": "application/json"},
-                        json={"id":"test4", "vector": [0.1, 0.2, 0.4]})    
-        assert response.status_code == 200
-        response = self.client.post("/upsert",
-                        headers={"Content-Type": "application/json"},
-                        json={"id":"test5", "vector": [0.11,0.22,0.39]})    
-        assert response.status_code == 200
-        
-        
+        change3 = self.vector[3:]
+        changeVector1 = [0.1, 0.2, 0.2]        
+        changeVector1[len(changeVector1):len(changeVector1)] = change3
+
+        changeVector3 = [0.1, 0.2, 0.4]        
+        changeVector3[len(changeVector3):len(changeVector3)] = change3
+
         response = self.client.post("/multiSearch",
                             headers={"Content-Type": "application/json"},
-                            json={"vectors": [{"vector":[0.1,0.2,0.2]}, {"vector":[0.1,0.2,0.4]}], "num":10, "radius":-1.0, "epsilon":0.01, "timeout": 50000000000})    
+                            json={"vectors": [{"vector":changeVector1}, {"vector":changeVector3}], "num":10, "radius":-1.0, "epsilon":0.01, "timeout": 50000000000})    
         assert response.status_code == 200
         searchResult = ValdSearchResult.parse_obj(response.json())
         assert searchResult.statusInfo.status == "OK"
         assert "" in searchResult.statusInfo.message
-        assert searchResult.ids == ['test1', 'test4', 'test3', 'test5']
+        assert searchResult.ids == ['test-ms1', 'test-ms4', 'test-ms3', 'test-ms5']
         

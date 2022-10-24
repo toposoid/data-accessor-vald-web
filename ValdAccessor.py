@@ -47,7 +47,6 @@ class ValdAccessor():
         vec = payload_pb2.Object.Vector(id=id, vector=vector)
         icfg = payload_pb2.Insert.Config(skip_strict_exist_check=True)
         self.istub.Insert(payload_pb2.Insert.Request(vector=vec, config=icfg))
-        
 
     def upsert(self, id, vector):
         self.delete(id)      
