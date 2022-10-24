@@ -32,7 +32,7 @@ ngt:
   # path to index data
   index_path: "/etc/server/backup"
   # vector dimension
-  dimension: 3
+  dimension: 768
   # bulk insert chunk size
   bulk_insert_chunk_size: 10
   # distance_type, which should be "l1", "l2" "angle", "hamming", "cosine", "normalizedangle", "normalizedcosine" or "jaccard"
