@@ -66,7 +66,7 @@ class TestVoldAPI(object):
                         headers={"Content-Type": "application/json"},
                         json={"id":"test-ms5", "vector": changeVector4})    
         assert response.status_code == 200
-        time.sleep(30)
+        time.sleep(60)
 
 
     @classmethod
