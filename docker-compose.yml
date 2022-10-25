@@ -9,8 +9,7 @@ networks:
 
 services:
   data-accessor-vald-web:
-    image: data-accessor-vald-web:0.4-SNAPSHOT
-    tty: true
+    image: toposoid//data-accessor-vald-web:0.4-SNAPSHOT    
     environment:
       - TOPOSOID_VALD_HOST=172.30.0.3
       - TOPOSOID_VALD_PORT=8081
@@ -23,7 +22,7 @@ services:
     depends_on:
       - vald
   vald:
-    image: vdaas/vald-agent-ngt:v1.6.1
+    image: vdaas/vald-agent-ngt:v1.6.3
     volumes:
        - ./vald-config:/etc/server
     networks:

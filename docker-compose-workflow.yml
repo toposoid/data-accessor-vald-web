@@ -23,7 +23,7 @@ services:
     depends_on:
       - vald
   vald:
-    image: vdaas/vald-agent-ngt:v1.6.1
+    image: vdaas/vald-agent-ngt:v1.6.3
     volumes:
        - ./vald-config:/etc/server
     networks:

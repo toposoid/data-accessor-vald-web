@@ -20,6 +20,13 @@ import numpy as np
 import time
 import pytest
 
+
+@pytest.fixture
+def sleepless(monkeypatch):
+    def sleep(seconds):
+        pass
+    monkeypatch.setattr(time, 'sleep', sleep)
+
 class TestVoldAPI(object):
 
     client = TestClient(app)
