@@ -67,7 +67,7 @@ class TestVoldAPI(object):
                         json={"id":"test-ms5", "vector": changeVector4})    
         assert response.status_code == 200
         
-        sleep(90)
+        sleep(60)
 
     @classmethod
     def teardown_class(cls):
