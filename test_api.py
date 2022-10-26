@@ -67,27 +67,7 @@ class TestVoldAPI(object):
                         json={"id":"test-ms5", "vector": changeVector4})    
         assert response.status_code == 200
         
-        sleep(60)
-        '''
-        isSeachable = False
-        while not isSeachable:
-            try:
-                response = cls.client.post("/multiSearch",
-                headers={"Content-Type": "application/json"},
-                json={"vectors": [{"vector":cls.vector}, {"vector":changeVector4}], "num":10, "radius":-1.0, "epsilon":0.01, "timeout": 100000000000})    
-                
-                if response.status_code == 200:                
-                    valdSearchInfo = ValdSearchResult.parse_obj(response.json())
-                    if valdSearchInfo.statusInfo.status == "OK":            
-                        isSeachable = True
-                        break
-                    else:
-                        time.sleep(3)
-            except Exception as e:
-                pass
-                time.sleep(3)
-        '''        
-
+        sleep(90)
 
     @classmethod
     def teardown_class(cls):
