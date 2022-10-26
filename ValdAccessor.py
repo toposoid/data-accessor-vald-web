@@ -24,6 +24,11 @@ from vald.v1.vald import object_pb2_grpc
 from vald.v1.payload import payload_pb2
 import os
 
+from logging import config
+config.fileConfig('logging.conf')
+import logging
+LOG = logging.getLogger(__name__)
+
 class ValdAccessor():
 
     channel = None
@@ -34,6 +39,8 @@ class ValdAccessor():
     rstub = None
 
     def __init__(self) :
+        LOG.info(os.environ["TOPOSOID_VALD_HOST"])
+        LOG.info(os.environ["TOPOSOID_VALD_PORT"])
         self.channel = grpc.insecure_channel(os.environ["TOPOSOID_VALD_HOST"] + ":" + os.environ["TOPOSOID_VALD_PORT"])
         ## create stubs for calling RPCs
         self.istub = insert_pb2_grpc.InsertStub(self.channel)
