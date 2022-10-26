@@ -24,7 +24,7 @@ services:
       - vald
   vald:
     image: vdaas/vald-agent-ngt:v1.6.3
-    user: runner:runner
+    user: 1001:121
     volumes:
        - ./vald-config:/etc/server
        - /etc/passwd:/etc/passwd:ro
