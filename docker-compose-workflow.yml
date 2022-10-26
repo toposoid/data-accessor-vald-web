@@ -31,3 +31,4 @@ services:
         ipv4_address: 172.30.0.3
     ports:
       - 8081:8081
+    user: runner:runner
