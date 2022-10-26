@@ -17,7 +17,7 @@ from fastapi.testclient import TestClient
 from api import app
 from model import VectorInfo, ValdSearchInfo, StatusInfo, ValdSearchResult
 import numpy as np
-import time
+from time import sleep
 import pytest
 
 class TestVoldAPI(object):
@@ -67,6 +67,8 @@ class TestVoldAPI(object):
                         json={"id":"test-ms5", "vector": changeVector4})    
         assert response.status_code == 200
         
+        sleep(60)
+        '''
         isSeachable = False
         while not isSeachable:
             try:
@@ -84,7 +86,7 @@ class TestVoldAPI(object):
             except Exception as e:
                 pass
                 time.sleep(3)
-                
+        '''        
 
 
     @classmethod
