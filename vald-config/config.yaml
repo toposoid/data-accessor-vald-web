@@ -10,7 +10,7 @@ server_config:
       host: 0.0.0.0
       port: 8081
       mode: GRPC
-      probe_wait_time: "3s"
+      probe_wait_time: "10s"
       http:
         shutdown_duration: "5s"
         handler_timeout: ""
