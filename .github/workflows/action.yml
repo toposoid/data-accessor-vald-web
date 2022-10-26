@@ -21,9 +21,10 @@ jobs:
       - name: Execute tests
         run: |
             cd ${GITHUB_WORKSPACE} && cd ../
-            cd ./${{ env.PJ_REPO }}
+            cd ./${{ env.PJ_REPO }}            
             docker build --build-arg TARGET_BRANCH=${{ env.PJ_BRANCH }} --tag ${{ env.PJ_REPO }}:${{ env.PJ_VERSION }} -f Dockerfile-workflow .
             docker-compose -f docker-compose-workflow.yml up -d
+            sleep(10)
             docker-compose -f docker-compose-workflow.yml exec -T ${{ env.PJ_REPO }} bash -c "cd ${{ env.PJ_REPO }} && pytest"
       - name: Docker meta
         id: docker_meta
