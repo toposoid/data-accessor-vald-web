@@ -15,7 +15,7 @@
  '''
 from fastapi.testclient import TestClient
 from api import app
-from model import VectorInfo, ValdSearchInfo, StatusInfo, ValdSearchResult
+from model import StatusInfo, FeatureVectorSearchResult
 import numpy as np
 from time import sleep
 import pytest
@@ -159,7 +159,7 @@ class TestVoldAPI(object):
                             headers={"Content-Type": "application/json"},
                             json={"vector": self.vector, "num":10, "radius":-1.0, "epsilon":0.01, "timeout": 50000000000})    
         assert response.status_code == 200
-        searchResult = ValdSearchResult.parse_obj(response.json())
+        searchResult = FeatureVectorSearchResult.parse_obj(response.json())
         assert searchResult.statusInfo.status == "OK"
         assert "" in searchResult.statusInfo.message
         assert searchResult.ids[0] == "test-ss1"
@@ -177,7 +177,7 @@ class TestVoldAPI(object):
                             headers={"Content-Type": "application/json"},
                             json={"vectors": [{"vector":changeVector1}, {"vector":changeVector3}], "num":10, "radius":-1.0, "epsilon":0.01, "timeout": 50000000000})    
         assert response.status_code == 200
-        searchResult = ValdSearchResult.parse_obj(response.json())
+        searchResult = FeatureVectorSearchResult.parse_obj(response.json())
         assert searchResult.statusInfo.status == "OK"
         assert "" in searchResult.statusInfo.message
         assert searchResult.ids == ['test-ms1', 'test-ms4', 'test-ms3', 'test-ms5']

@@ -3,6 +3,8 @@ This is a WEB API that works as a microservice within the Toposoid project.
 Toposoid is a knowledge base construction platform.(see [Toposoid Root Project](https://github.com/toposoid/toposoid.git))
 This microservice is a CUID wrapper for Vald (https://github.com/vdaas/vald).
 
+[![Test And Build](https://github.com/toposoid/data-accessor-vald-web/actions/workflows/action.yml/badge.svg)](https://github.com/toposoid/data-accessor-vald-web/actions/workflows/action.yml)
+
 ## Requirements
 * Docker version 20.10.x, or later
 * docker-compose version 1.22.x
@@ -19,7 +21,7 @@ http://localhost:9010/docs
 
 # Note
 * This microservice uses 9010 as the default port.
-* The vector dimension defaults to 768.If you want to change the dimension, you can change the settings in vald-config/config.yml
+* The vector dimension defaults to 768. If you want to change the dimension, you can change the settings in vald-config/config.yml
 
 ## License
 toposoid/data-accessor-vald-web is Open Source software released under the [Apache 2.0 license](https://www.apache.org/licenses/LICENSE-2.0.html).
