@@ -17,22 +17,25 @@
 from pydantic import BaseModel
 from typing import List
 
-class VectorInfo(BaseModel):
+class FeatureVectorForUpdate(BaseModel):
     id:str
     vector:List[float]
 
-class SearchVector(BaseModel):
+class FeatureVectorId(BaseModel):
+    id:str
+
+class FeatureVectorForSearch(BaseModel):
     vector:List[float]
 
-class ValdSearchInfo(BaseModel):
+class SingleFeatureVectorForSearch(BaseModel):
     vector:List[float]
     num:int
     radius:float
     epsilon:float
     timeout:int
 
-class ValdMultiSearchInfo(BaseModel):
-    vectors:List[SearchVector]
+class MultiFeatureVectorForSearch(BaseModel):
+    vectors:List[FeatureVectorForSearch]
     num:int
     radius:float
     epsilon:float
@@ -42,6 +45,6 @@ class StatusInfo(BaseModel):
     status:str
     message:str
 
-class ValdSearchResult(BaseModel):
+class FeatureVectorSearchResult(BaseModel):
     ids:List[str]
     statusInfo:StatusInfo
