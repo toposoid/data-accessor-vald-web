@@ -43,51 +43,53 @@ app.add_middleware(
     allow_headers=["*"]
 )
 
-@app.post("/insert")
+@app.post("/insert",
+            summary='Registration of feature vectors')
 def insert(featureVectorForUpdate:FeatureVectorForUpdate):
     try:        
-        valdAccessor.insert(featureVectorForUpdate.id, featureVectorForUpdate.vector)
-        return JSONResponse({"status": "OK", "message": ""})
+        valdAccessor.insert(featureVectorForUpdate.id, featureVectorForUpdate.vector)        
+        return JSONResponse(content=jsonable_encoder(StatusInfo(status="OK", message="")))
     except Exception as e:
         LOG.error(traceback.format_exc())
-        return JSONResponse({"status": "ERROR", "message": traceback.format_exc()})
-
-@app.post("/upsert")
+        return JSONResponse(content=jsonable_encoder(StatusInfo(status="ERROR", message=traceback.format_exc())))
+@app.post("/upsert",
+            summary='Registering and updating feature vectors')
 def insert(featureVectorForUpdate:FeatureVectorForUpdate):
     try:        
         valdAccessor.upsert(featureVectorForUpdate.id,featureVectorForUpdate.vector)
-        return JSONResponse({"status": "OK", "message": ""})
+        return JSONResponse(content=jsonable_encoder(StatusInfo(status="OK", message="")))
     except Exception as e:
         LOG.error(traceback.format_exc())
-        return JSONResponse({"status": "ERROR", "message": traceback.format_exc()})
+        return JSONResponse(content=jsonable_encoder(StatusInfo(status="ERROR", message=traceback.format_exc())))
 
-
-@app.post("/search")
+@app.post("/search",
+            summary='Find Single Feature Vector')
 def search(singleFeatureVectorForSearch:SingleFeatureVectorForSearch):
     try:
         res = valdAccessor.search(singleFeatureVectorForSearch.vector, singleFeatureVectorForSearch.num, singleFeatureVectorForSearch.radius, singleFeatureVectorForSearch.epsilon, singleFeatureVectorForSearch.timeout)
         return JSONResponse(content=jsonable_encoder(FeatureVectorSearchResult(ids=res, statusInfo=StatusInfo(status="OK", message=""))))        
     except Exception as e:
         LOG.error(traceback.format_exc())
-        return JSONResponse({"status": "ERROR", "message": traceback.format_exc()})
+        return JSONResponse(content=jsonable_encoder(StatusInfo(status="ERROR", message=traceback.format_exc())))
 
-@app.post("/multiSearch")
+@app.post("/multiSearch",
+            summary='Find Multi Feature Vector')
 def multiSearch(multiFeatureVectorForSearch:MultiFeatureVectorForSearch):
     try:
         res = valdAccessor.multiSearch(multiFeatureVectorForSearch.vectors, multiFeatureVectorForSearch.num, multiFeatureVectorForSearch.radius, multiFeatureVectorForSearch.epsilon, multiFeatureVectorForSearch.timeout)
         return JSONResponse(content=jsonable_encoder(FeatureVectorSearchResult(ids=res, statusInfo=StatusInfo(status="OK", message=""))))        
     except Exception as e:
         LOG.error(traceback.format_exc())
-        return JSONResponse({"status": "ERROR", "message": traceback.format_exc()})
+        return JSONResponse(content=jsonable_encoder(StatusInfo(status="ERROR", message=traceback.format_exc())))
 
 
-
-@app.post("/delete")
+@app.post("/delete",
+            summary='Delete a Feature Vector')
 def delete(featureVectorId:FeatureVectorId):
     try:
         valdAccessor.delete(featureVectorId.id)
-        return JSONResponse({"status": "OK", "message": ""})
+        return JSONResponse(content=jsonable_encoder(StatusInfo(status="OK", message="")))
     except Exception as e:
         LOG.error(traceback.format_exc())
-        return JSONResponse({"status": "ERROR", "message": traceback.format_exc()})
+        return JSONResponse(content=jsonable_encoder(StatusInfo(status="ERROR", message=traceback.format_exc())))
 
