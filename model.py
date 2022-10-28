@@ -17,16 +17,21 @@
 from pydantic import BaseModel
 from typing import List
 
+
+#For searching feature vectors.
 class FeatureVectorForUpdate(BaseModel):
     id:str
     vector:List[float]
 
+#For deleting feature vectors
 class FeatureVectorId(BaseModel):
     id:str
 
+#For searching feature vectors.
 class FeatureVectorForSearch(BaseModel):
     vector:List[float]
 
+#For feature vector search requests
 class SingleFeatureVectorForSearch(BaseModel):
     vector:List[float]
     num:int
@@ -34,6 +39,7 @@ class SingleFeatureVectorForSearch(BaseModel):
     epsilon:float
     timeout:int
 
+#For feature vector search requests. Multiple vectors can be set.
 class MultiFeatureVectorForSearch(BaseModel):
     vectors:List[FeatureVectorForSearch]
     num:int
@@ -41,10 +47,12 @@ class MultiFeatureVectorForSearch(BaseModel):
     epsilon:float
     timeout:int
 
+#Status Information
 class StatusInfo(BaseModel):
     status:str
     message:str
 
+#For feature vector search results
 class FeatureVectorSearchResult(BaseModel):
     ids:List[str]
     statusInfo:StatusInfo
