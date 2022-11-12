@@ -159,6 +159,7 @@ class TestVoldAPI(object):
                             headers={"Content-Type": "application/json"},
                             json={"vector": self.vector, "num":10, "radius":-1.0, "epsilon":0.01, "timeout": 50000000000})    
         assert response.status_code == 200
+        print(response.json())
         searchResult = FeatureVectorSearchResult.parse_obj(response.json())
         assert searchResult.statusInfo.status == "OK"
         assert "" in searchResult.statusInfo.message
@@ -177,6 +178,7 @@ class TestVoldAPI(object):
                             headers={"Content-Type": "application/json"},
                             json={"vectors": [{"vector":changeVector1}, {"vector":changeVector3}], "num":10, "radius":-1.0, "epsilon":0.01, "timeout": 50000000000})    
         assert response.status_code == 200
+        print(response.json())
         searchResult = FeatureVectorSearchResult.parse_obj(response.json())
         assert searchResult.statusInfo.status == "OK"
         assert "" in searchResult.statusInfo.message
