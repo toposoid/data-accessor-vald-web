@@ -28,7 +28,7 @@ class TestVoldAPI(object):
     @classmethod
     def setup_class(cls):
 
-        response = cls.client.post("/insert",
+        response = cls.client.post("/upsert",
                         headers={"Content-Type": "application/json"},
                         json={"id":"test-ss1", "vector": cls.vector})    
         print(StatusInfo.parse_obj(response.json()))
@@ -46,23 +46,23 @@ class TestVoldAPI(object):
         changeVector4 = [0.11,0.22,0.39]        
         changeVector4[len(changeVector4):len(changeVector4)] = change3
 
-        response = cls.client.post("/insert",
+        response = cls.client.post("/upsert",
                         headers={"Content-Type": "application/json"},
                         json={"id":"test-ms1", "vector": changeVector1})    
         assert response.status_code == 200
-        response = cls.client.post("/insert",
+        response = cls.client.post("/upsert",
                         headers={"Content-Type": "application/json"},
                         json={"id":"test-ms2", "vector": changeVector2})    
         assert response.status_code == 200
-        response = cls.client.post("/insert",
+        response = cls.client.post("/upsert",
                         headers={"Content-Type": "application/json"},
                         json={"id":"test-ms3", "vector": changeVector3})    
         assert response.status_code == 200
-        response = cls.client.post("/insert",
+        response = cls.client.post("/upsert",
                         headers={"Content-Type": "application/json"},
                         json={"id":"test-ms4", "vector": changeVector3})    
         assert response.status_code == 200
-        response = cls.client.post("/insert",
+        response = cls.client.post("/upsert",
                         headers={"Content-Type": "application/json"},
                         json={"id":"test-ms5", "vector": changeVector4})    
         assert response.status_code == 200
@@ -180,5 +180,5 @@ class TestVoldAPI(object):
         searchResult = FeatureVectorSearchResult.parse_obj(response.json())
         assert searchResult.statusInfo.status == "OK"
         assert "" in searchResult.statusInfo.message
-        assert searchResult.ids == ['test-ms1', 'test-ms4', 'test-ms3', 'test-ms5']
+        assert sorted(list(set(searchResult.ids))) == ['test-ms1', 'test-ms3', 'test-ms4', 'test-ms5']
         
