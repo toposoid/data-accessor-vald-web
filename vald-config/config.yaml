@@ -36,7 +36,7 @@ ngt:
   # bulk insert chunk size
   bulk_insert_chunk_size: 10
   # distance_type, which should be "l1", "l2" "angle", "hamming", "cosine", "normalizedangle", "normalizedcosine" or "jaccard"
-  distance_type: l2
+  distance_type: cosine
   # object_type, which should be "float" or "uint8"
   object_type: float
   # creation edge size

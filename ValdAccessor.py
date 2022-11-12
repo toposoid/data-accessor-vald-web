@@ -23,6 +23,10 @@ from vald.v1.vald import remove_pb2_grpc
 from vald.v1.vald import object_pb2_grpc
 from vald.v1.payload import payload_pb2
 import os
+from logging import config
+config.fileConfig('logging.conf')
+import logging
+LOG = logging.getLogger(__name__)
 
 class ValdAccessor():
 
@@ -63,7 +67,16 @@ class ValdAccessor():
         if len(res.results) == 0:
             return []
         else:
-            return list(map(lambda x:  x.id, res.results))
+            result = []
+            for x in res.results:
+                LOG.info(x.id + ": "+ str(x.distance))
+                if not getattr(x, 'distance'):                        
+                    result.append(x.id)
+                elif x.distance < float(os.environ["TOPOSOID_VALD_DISTANCE_THRESHHOLD"]) :
+                    result.append(x.id)                                      
+            return result            
+
+            #return list(map(lambda x:  x.id, res.results))
 
     def multiSearch(self, vectors, num=10, radius=-1.0, epsilon=0.01, timeout=3000000000):
         scfg = payload_pb2.Search.Config(num=num, radius=radius, epsilon=epsilon, timeout=timeout)        
@@ -75,6 +88,7 @@ class ValdAccessor():
             result = []
             for x in res.responses:                                
                 for y in x.results:
+                    LOG.info(y.id + ": "+ str(y.distance))                    
                     if not getattr(y, 'distance'):                        
                         result.append(y.id)
                     elif y.distance < float(os.environ["TOPOSOID_VALD_DISTANCE_THRESHHOLD"]) :
