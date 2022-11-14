@@ -95,6 +95,26 @@ class ValdAccessor():
                         result.append(y.id)                                      
             return result            
 
+    def searchById(self, id):   
+        try:     
+            scfg = payload_pb2.Search.Config(num=1, radius=-1.0, epsilon=0.1, timeout=3000000000)
+            res = self.sstub.SearchByID(payload_pb2.Search.IDRequest(id=id, config=scfg))
+            if len(res.results) == 0:
+                return []
+            else:
+                result = []
+                for x in res.results:
+                    LOG.info(x.id + ": "+ str(x.distance))
+                    if not getattr(x, 'distance'):                        
+                        result.append(x.id)
+                    elif x.distance == 0.0:
+                        result.append(x.id)                                      
+                return result            
+        except Exception as e:
+            pass
+            return []
+
+
     def delete(self, id): 
         try:
             result = self.exstub.Exists(payload_pb2.Object.ID(id=id))
