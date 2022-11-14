@@ -93,3 +93,12 @@ def delete(featureVectorId:FeatureVectorId):
         LOG.error(traceback.format_exc())
         return JSONResponse(content=jsonable_encoder(StatusInfo(status="ERROR", message=traceback.format_exc())))
 
+@app.post("/searchById",
+            summary='Find a Feature Vector by Id')
+def searchById(featureVectorId:FeatureVectorId):
+    try:
+        res = valdAccessor.searchById(featureVectorId.id)
+        return JSONResponse(content=jsonable_encoder(FeatureVectorSearchResult(ids=res, statusInfo=StatusInfo(status="OK", message=""))))
+    except Exception as e:
+        LOG.error(traceback.format_exc())
+        return JSONResponse(content=jsonable_encoder(StatusInfo(status="ERROR", message=traceback.format_exc())))
