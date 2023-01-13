@@ -26,8 +26,7 @@ class TestVoldAPI(object):
     vector = list(np.random.rand(768))
 
     @classmethod
-    def setup_class(cls):
-
+    def setup_class(cls):        
         response = cls.client.post("/upsert",
                         headers={"Content-Type": "application/json"},
                         json={"id":"test-ss1", "vector": cls.vector})    
@@ -67,8 +66,8 @@ class TestVoldAPI(object):
                         json={"id":"test-ms5", "vector": changeVector4})    
         assert response.status_code == 200
         
-        sleep(90)
-
+        sleep(5)
+        
     @classmethod
     def teardown_class(cls):
         response = cls.client.post("/delete",
@@ -163,6 +162,21 @@ class TestVoldAPI(object):
         assert searchResult.statusInfo.status == "OK"
         assert "" in searchResult.statusInfo.message
         assert searchResult.ids[0] == "test-ss1"
+
+
+    def test_SingleSearchNoResponse(self):     
+
+        response = self.client.post("/search",
+                            headers={"Content-Type": "application/json"},
+                            json={"vector": list(np.random.rand(768)), "num":1, "radius":-1.0, "epsilon":0.01, "timeout": 50000000000})    
+        assert response.status_code == 200
+        searchResult = FeatureVectorSearchResult.parse_obj(response.json())
+        assert len(searchResult.ids) == 0
+        
+
+
+
+
 
     def test_MultiSearch(self):     
 

@@ -69,8 +69,9 @@ def search(singleFeatureVectorForSearch:SingleFeatureVectorForSearch):
         res = valdAccessor.search(singleFeatureVectorForSearch.vector, singleFeatureVectorForSearch.num, singleFeatureVectorForSearch.radius, singleFeatureVectorForSearch.epsilon, singleFeatureVectorForSearch.timeout)
         return JSONResponse(content=jsonable_encoder(FeatureVectorSearchResult(ids=res, statusInfo=StatusInfo(status="OK", message=""))))        
     except Exception as e:
+        #Exception occurs when there is no search result for some reason
         LOG.error(traceback.format_exc())
-        return JSONResponse(content=jsonable_encoder(StatusInfo(status="ERROR", message=traceback.format_exc())))
+        return JSONResponse(content=jsonable_encoder(FeatureVectorSearchResult(ids=[], statusInfo=StatusInfo(status="ERROR", message=traceback.format_exc()))))
 
 @app.post("/multiSearch",
             summary='Find Multi Feature Vector')
@@ -79,8 +80,9 @@ def multiSearch(multiFeatureVectorForSearch:MultiFeatureVectorForSearch):
         res = valdAccessor.multiSearch(multiFeatureVectorForSearch.vectors, multiFeatureVectorForSearch.num, multiFeatureVectorForSearch.radius, multiFeatureVectorForSearch.epsilon, multiFeatureVectorForSearch.timeout)
         return JSONResponse(content=jsonable_encoder(FeatureVectorSearchResult(ids=res, statusInfo=StatusInfo(status="OK", message=""))))        
     except Exception as e:
+        #Exception occurs when there is no search result for some reason
         LOG.error(traceback.format_exc())
-        return JSONResponse(content=jsonable_encoder(StatusInfo(status="ERROR", message=traceback.format_exc())))
+        return JSONResponse(content=jsonable_encoder(FeatureVectorSearchResult(ids=[], statusInfo=StatusInfo(status="ERROR", message=traceback.format_exc()))))
 
 
 @app.post("/delete",
