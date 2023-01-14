@@ -25,6 +25,7 @@ http://localhost:9010/docs
 # Note
 * This microservice uses 9010 as the default port.
 * The vector dimension defaults to 768. If you want to change the dimension, you can change the settings in vald-config/config.yml
+* This microservice uses [vdaas/vald](https://github.com/vdaas/vald)
 
 ## License
 toposoid/data-accessor-vald-web is Open Source software released under the [Apache 2.0 license](https://www.apache.org/licenses/LICENSE-2.0.html).
