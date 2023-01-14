@@ -8,6 +8,9 @@ This microservice is a CUID wrapper for Vald (https://github.com/vdaas/vald).
 ## Requirements
 * Docker version 20.10.x, or later
 * docker-compose version 1.22.x
+* The following microservices must be running
+> vdaas/vald-agent-ngt:v1.6.3
+
 
 ## Setup
 ```bssh
