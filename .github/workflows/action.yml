@@ -23,7 +23,7 @@ jobs:
             cd ${GITHUB_WORKSPACE} && cd ../
             cd ./${{ env.PJ_REPO }}
             docker build --build-arg TARGET_BRANCH=${{ env.PJ_BRANCH }} --tag ${{ env.PJ_REPO }}:${{ env.PJ_VERSION }} -f Dockerfile-workflow .
-            rm -f vald-config/backup/.gitkeep
+            rm -f vald-config/backup/*
             echo "$(id -u $USER):$(id -g $USER)"
             docker-compose -f docker-compose-workflow.yml up -d            
             docker-compose logs
