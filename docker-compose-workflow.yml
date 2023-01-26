@@ -9,7 +9,7 @@ networks:
 
 services:
   data-accessor-vald-web:
-    image: data-accessor-vald-web:0.4-SNAPSHOT
+    image: data-accessor-vald-web:0.4
     tty: true
     environment:
       - TOPOSOID_VALD_HOST=172.30.0.3

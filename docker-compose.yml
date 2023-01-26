@@ -9,7 +9,7 @@ networks:
 
 services:
   data-accessor-vald-web:
-    image: toposoid/data-accessor-vald-web:0.4-SNAPSHOT    
+    image: toposoid/data-accessor-vald-web:0.4
     environment:
       - TOPOSOID_VALD_HOST=172.30.0.3
       - TOPOSOID_VALD_PORT=8081
