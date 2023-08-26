@@ -65,16 +65,22 @@ class ValdAccessor():
         scfg = payload_pb2.Search.Config(num=num, radius=radius, epsilon=epsilon, timeout=timeout)
         res = self.sstub.Search(payload_pb2.Search.Request(vector=vector, config=scfg))
         if len(res.results) == 0:
-            return []
+            return [], []
         else:
             result = []
+            similarities = []
             for x in res.results:
                 LOG.info(x.id + ": "+ str(x.distance))
-                if not getattr(x, 'distance'):                        
+                #if not getattr(x, 'distance'):
+                #    result.append(x.id)
+                #    similarities.append(1.0)
+                if x.distance < float(os.environ["TOPOSOID_VALD_DISTANCE_THRESHHOLD"]) :
                     result.append(x.id)
-                elif x.distance < float(os.environ["TOPOSOID_VALD_DISTANCE_THRESHHOLD"]) :
-                    result.append(x.id)                                      
-            return result            
+                    if x.distance == 0:
+                        similarities.append(1.0)
+                    else:
+                        similarities.append(1.0 - x.distance)
+            return result, similarities        
 
             #return list(map(lambda x:  x.id, res.results))
 
@@ -83,36 +89,46 @@ class ValdAccessor():
         reqs = list(map(lambda v: payload_pb2.Search.Request(vector=v.vector, config=scfg), vectors))        
         res = self.sstub.MultiSearch(payload_pb2.Search.MultiRequest(requests=reqs))        
         if len(res.responses) == 0:
-            return []
+            return [], []
         else:
             result = []
+            similarities = []
             for x in res.responses:                                
                 for y in x.results:
                     LOG.info(y.id + ": "+ str(y.distance))                    
-                    if not getattr(y, 'distance'):                        
+                    #if not getattr(y, 'distance'):                        
+                    #    result.append(y.id)
+                    #    similarities.append(1.0)
+                    if y.distance < float(os.environ["TOPOSOID_VALD_DISTANCE_THRESHHOLD"]) :
                         result.append(y.id)
-                    elif y.distance < float(os.environ["TOPOSOID_VALD_DISTANCE_THRESHHOLD"]) :
-                        result.append(y.id)                                      
-            return result            
+                        if y.distance == 0:
+                            similarities.append(1.0)
+                        else:
+                            similarities.append(1.0 - y.distance)                                      
+            return result, similarities            
 
     def searchById(self, id):   
         try:     
             scfg = payload_pb2.Search.Config(num=1, radius=-1.0, epsilon=0.1, timeout=3000000000)
             res = self.sstub.SearchByID(payload_pb2.Search.IDRequest(id=id, config=scfg))
             if len(res.results) == 0:
-                return []
+                return [], []
             else:
                 result = []
+                similarities = []
                 for x in res.results:
                     LOG.info(x.id + ": "+ str(x.distance))
-                    if not getattr(x, 'distance'):                        
+                    #if not getattr(x, 'distance'):                        
+                    #    result.append(x.id)
+                    #    similarities.append(1.0)                     
+                    if x.distance == 0.0:                        
                         result.append(x.id)
-                    elif x.distance == 0.0:
-                        result.append(x.id)                                      
-                return result            
+                        similarities.append(1.0)
+
+                return result, similarities            
         except Exception as e:
             pass
-            return []
+            return [],[]
 
 
     def delete(self, id): 

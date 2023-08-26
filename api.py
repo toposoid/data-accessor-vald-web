@@ -31,7 +31,7 @@ from ValdAccessor import ValdAccessor
 
 app = FastAPI(
     title="data-accessor-vald-web",
-    version="0.4-SNAPSHOT"
+    version="0.5-SNAPSHOT"
 )
 
 valdAccessor = ValdAccessor()
@@ -66,23 +66,23 @@ def insert(featureVectorForUpdate:FeatureVectorForUpdate):
             summary='Find Single Feature Vector')
 def search(singleFeatureVectorForSearch:SingleFeatureVectorForSearch):
     try:
-        res = valdAccessor.search(singleFeatureVectorForSearch.vector, singleFeatureVectorForSearch.num, singleFeatureVectorForSearch.radius, singleFeatureVectorForSearch.epsilon, singleFeatureVectorForSearch.timeout)
-        return JSONResponse(content=jsonable_encoder(FeatureVectorSearchResult(ids=res, statusInfo=StatusInfo(status="OK", message=""))))        
+        ids, similarities = valdAccessor.search(singleFeatureVectorForSearch.vector, singleFeatureVectorForSearch.num, singleFeatureVectorForSearch.radius, singleFeatureVectorForSearch.epsilon, singleFeatureVectorForSearch.timeout)
+        return JSONResponse(content=jsonable_encoder(FeatureVectorSearchResult(ids = ids, similarities = similarities, statusInfo=StatusInfo(status="OK", message=""))))        
     except Exception as e:
         #Exception occurs when there is no search result for some reason
         LOG.error(traceback.format_exc())
-        return JSONResponse(content=jsonable_encoder(FeatureVectorSearchResult(ids=[], statusInfo=StatusInfo(status="ERROR", message=traceback.format_exc()))))
+        return JSONResponse(content=jsonable_encoder(FeatureVectorSearchResult(ids=[], similarities=[], statusInfo=StatusInfo(status="ERROR", message=traceback.format_exc()))))
 
 @app.post("/multiSearch",
             summary='Find Multi Feature Vector')
 def multiSearch(multiFeatureVectorForSearch:MultiFeatureVectorForSearch):
     try:
-        res = valdAccessor.multiSearch(multiFeatureVectorForSearch.vectors, multiFeatureVectorForSearch.num, multiFeatureVectorForSearch.radius, multiFeatureVectorForSearch.epsilon, multiFeatureVectorForSearch.timeout)
-        return JSONResponse(content=jsonable_encoder(FeatureVectorSearchResult(ids=res, statusInfo=StatusInfo(status="OK", message=""))))        
+        ids, similarities  = valdAccessor.multiSearch(multiFeatureVectorForSearch.vectors, multiFeatureVectorForSearch.num, multiFeatureVectorForSearch.radius, multiFeatureVectorForSearch.epsilon, multiFeatureVectorForSearch.timeout)
+        return JSONResponse(content=jsonable_encoder(FeatureVectorSearchResult(ids = ids, similarities = similarities, statusInfo=StatusInfo(status="OK", message=""))))        
     except Exception as e:
         #Exception occurs when there is no search result for some reason
         LOG.error(traceback.format_exc())
-        return JSONResponse(content=jsonable_encoder(FeatureVectorSearchResult(ids=[], statusInfo=StatusInfo(status="ERROR", message=traceback.format_exc()))))
+        return JSONResponse(content=jsonable_encoder(FeatureVectorSearchResult(ids=[], similarities=[], statusInfo=StatusInfo(status="ERROR", message=traceback.format_exc()))))
 
 
 @app.post("/delete",
@@ -99,8 +99,8 @@ def delete(featureVectorId:FeatureVectorId):
             summary='Find a Feature Vector by Id')
 def searchById(featureVectorId:FeatureVectorId):
     try:
-        res = valdAccessor.searchById(featureVectorId.id)
-        return JSONResponse(content=jsonable_encoder(FeatureVectorSearchResult(ids=res, statusInfo=StatusInfo(status="OK", message=""))))
+        ids, similarities = valdAccessor.searchById(featureVectorId.id)
+        return JSONResponse(content=jsonable_encoder(FeatureVectorSearchResult(ids = ids, similarities = similarities, statusInfo=StatusInfo(status="OK", message=""))))
     except Exception as e:
         LOG.error(traceback.format_exc())
-        return JSONResponse(content=jsonable_encoder(StatusInfo(status="ERROR", message=traceback.format_exc())))
+        return JSONResponse(content=jsonable_encoder(FeatureVectorSearchResult(ids=[], similarities=[], statusInfo=StatusInfo(status="ERROR", message=traceback.format_exc()))))
