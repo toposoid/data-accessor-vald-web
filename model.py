@@ -55,4 +55,5 @@ class StatusInfo(BaseModel):
 #For feature vector search results
 class FeatureVectorSearchResult(BaseModel):
     ids:List[str]
+    similarities:List[float]
     statusInfo:StatusInfo
