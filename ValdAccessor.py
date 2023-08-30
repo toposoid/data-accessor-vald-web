@@ -26,6 +26,7 @@ import os
 from logging import config
 config.fileConfig('logging.conf')
 import logging
+import time
 LOG = logging.getLogger(__name__)
 
 class ValdAccessor():
@@ -133,10 +134,17 @@ class ValdAccessor():
 
     def delete(self, id): 
         try:
-            result = self.exstub.Exists(payload_pb2.Object.ID(id=id))
-            rcfg = payload_pb2.Remove.Config(skip_strict_exist_check=True)
-            rid = payload_pb2.Object.ID(id=id)
-            self.rstub.Remove(payload_pb2.Remove.Request(id=rid, config=rcfg))
+            i = 0
+            while(self.exstub.Exists(payload_pb2.Object.ID(id=id))):
+                rcfg = payload_pb2.Remove.Config(skip_strict_exist_check=True)
+                rid = payload_pb2.Object.ID(id=id)
+                self.rstub.Remove(payload_pb2.Remove.Request(id=rid, config=rcfg))
+                time.sleep(1)               
+                if i > 3:
+                    break
+                i += 1
         except Exception as e:
             pass
-     
+        
+
+

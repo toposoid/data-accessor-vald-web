@@ -151,6 +151,17 @@ class TestVoldAPI(object):
         assert statusInfo.status == "OK"
         assert "" in statusInfo.message
 
+        response = self.client.post("/searchById",
+                            headers={"Content-Type": "application/json"},
+                            json={"id":"test1"})    
+        assert response.status_code == 200
+        searchResult = FeatureVectorSearchResult.parse_obj(response.json())
+        assert searchResult.statusInfo.status == "OK"
+        assert "" in searchResult.statusInfo.message
+        assert len(searchResult.ids) == 0
+
+
+
 
     def test_SingleSearch(self):     
 
