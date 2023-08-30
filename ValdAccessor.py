@@ -81,6 +81,8 @@ class ValdAccessor():
                         similarities.append(1.0)
                     else:
                         similarities.append(1.0 - x.distance)
+            result.reverse()
+            similarities.reverse()
             return result, similarities        
 
             #return list(map(lambda x:  x.id, res.results))
@@ -105,7 +107,9 @@ class ValdAccessor():
                         if y.distance == 0:
                             similarities.append(1.0)
                         else:
-                            similarities.append(1.0 - y.distance)                                      
+                            similarities.append(1.0 - y.distance)   
+            result.reverse()
+            similarities.reverse()                                   
             return result, similarities            
 
     def searchById(self, id):   
@@ -125,7 +129,8 @@ class ValdAccessor():
                     if x.distance == 0.0:                        
                         result.append(x.id)
                         similarities.append(1.0)
-
+                result.reverse()
+                similarities.reverse()
                 return result, similarities            
         except Exception as e:
             pass
