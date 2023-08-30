@@ -1,4 +1,4 @@
-vald-client-python==1.6.1
+vald-client-python==1.7.6.post2
 fastapi[all]==0.70.0
 uvicorn[standard]==0.15.0
 pydantic==1.8.2

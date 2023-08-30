@@ -139,7 +139,7 @@ class ValdAccessor():
                 rcfg = payload_pb2.Remove.Config(skip_strict_exist_check=True)
                 rid = payload_pb2.Object.ID(id=id)
                 self.rstub.Remove(payload_pb2.Remove.Request(id=rid, config=rcfg))
-                time.sleep(1)               
+                time.sleep(3)               
                 if i > 3:
                     break
                 i += 1
