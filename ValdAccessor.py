@@ -62,7 +62,7 @@ class ValdAccessor():
         #uscfg = payload_pb2.Upsert.Config(skip_strict_exist_check=False)
         #self.usstub.Upsert(payload_pb2.Upsert.Request(vector=vec, config=uscfg))
 
-    def search(self, vector, num=10, radius=-1.0, epsilon=0.01, timeout=3000000000):
+    def search(self, vector, num=20, radius=-1.0, epsilon=0.1, timeout=3000000000):
         scfg = payload_pb2.Search.Config(num=num, radius=radius, epsilon=epsilon, timeout=timeout)
         res = self.sstub.Search(payload_pb2.Search.Request(vector=vector, config=scfg))
         if len(res.results) == 0:
@@ -85,7 +85,7 @@ class ValdAccessor():
 
             #return list(map(lambda x:  x.id, res.results))
 
-    def multiSearch(self, vectors, num=10, radius=-1.0, epsilon=0.01, timeout=3000000000):
+    def multiSearch(self, vectors, num=20, radius=-1.0, epsilon=0.1, timeout=3000000000):
         scfg = payload_pb2.Search.Config(num=num, radius=radius, epsilon=epsilon, timeout=timeout)        
         reqs = list(map(lambda v: payload_pb2.Search.Request(vector=v.vector, config=scfg), vectors))        
         res = self.sstub.MultiSearch(payload_pb2.Search.MultiRequest(requests=reqs))        
@@ -110,22 +110,15 @@ class ValdAccessor():
 
     def searchById(self, id):   
         try:     
-            scfg = payload_pb2.Search.Config(num=1, radius=-1.0, epsilon=0.1, timeout=3000000000)
+            scfg = payload_pb2.Search.Config(num=100, radius=-1, epsilon=0.1, timeout=3000000000)
             res = self.sstub.SearchByID(payload_pb2.Search.IDRequest(id=id, config=scfg))
             if len(res.results) == 0:
                 return [], []
             else:
                 result = []
                 similarities = []
-                for x in res.results:
-                    LOG.info(x.id + ": "+ str(x.distance))
-                    #if not getattr(x, 'distance'):                        
-                    #    result.append(x.id)
-                    #    similarities.append(1.0)                     
-                    if x.distance == 0.0:                        
-                        result.append(x.id)
-                        similarities.append(1.0)
-                return result, similarities            
+                if id not in list(map(lambda x: x.id, res.results)): return [], []
+                else: return [id], [1.0]
         except Exception as e:
             pass
             return [],[]
