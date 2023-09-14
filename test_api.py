@@ -26,7 +26,7 @@ class TestVoldAPI(object):
     vector = list(np.random.rand(768))
 
     @classmethod
-    def setup_class(cls):        
+    def setup_class(cls):    
         response = cls.client.post("/upsert",
                         headers={"Content-Type": "application/json"},
                         json={"id":"test-ss1", "vector": cls.vector})    
@@ -151,6 +151,17 @@ class TestVoldAPI(object):
         assert statusInfo.status == "OK"
         assert "" in statusInfo.message
 
+        response = self.client.post("/searchById",
+                            headers={"Content-Type": "application/json"},
+                            json={"id":"test1"})    
+        assert response.status_code == 200
+        searchResult = FeatureVectorSearchResult.parse_obj(response.json())
+        assert searchResult.statusInfo.status == "OK"
+        assert "" in searchResult.statusInfo.message
+        assert len(searchResult.ids) == 0
+
+
+
 
     def test_SingleSearch(self):     
 
@@ -207,3 +218,46 @@ class TestVoldAPI(object):
         assert searchResult.statusInfo.status == "OK"
         assert "" in searchResult.statusInfo.message
         assert searchResult.ids[0] == "test-ss1"
+
+    def test_ActualDataRemove(self):     
+        
+        vector = list(np.random.rand(768))
+        testIds = []
+        import uuid
+        for i in range(5):
+            id = str(uuid.uuid1()) + '#ja_JP#' + str(uuid.uuid1())
+            testIds.append(id)
+            response = self.client.post("/insert",
+                            headers={"Content-Type": "application/json"},
+                            json={"id":id, "vector": vector})    
+            assert response.status_code == 200
+        sleep(5)
+        for id in testIds:
+            response = self.client.post("/searchById",
+                                headers={"Content-Type": "application/json"},
+                                json={"id":id})    
+            assert response.status_code == 200
+            searchResult = FeatureVectorSearchResult.parse_obj(response.json())
+            assert searchResult.statusInfo.status == "OK"
+            assert "" in searchResult.statusInfo.message            
+            assert searchResult.ids[0] == id
+
+        for id in testIds:
+            response = self.client.post("/delete",
+                                headers={"Content-Type": "application/json"},
+                                json={"id":id, "vector": []})    
+            assert response.status_code == 200
+            statusInfo = StatusInfo.parse_obj(response.json())
+            assert statusInfo.status == "OK"
+            assert "" in statusInfo.message
+        
+        sleep(5)
+        for id in testIds:
+            response = self.client.post("/searchById",
+                                headers={"Content-Type": "application/json"},
+                                json={"id":id})    
+            assert response.status_code == 200
+            searchResult = FeatureVectorSearchResult.parse_obj(response.json())
+            assert searchResult.statusInfo.status == "OK"
+            assert "" in searchResult.statusInfo.message            
+            assert len(searchResult.ids) == 0
