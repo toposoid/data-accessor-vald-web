@@ -15,10 +15,11 @@
  '''
 
 from fastapi import FastAPI
-from model import FeatureVectorForUpdate, FeatureVectorId, SingleFeatureVectorForSearch, FeatureVectorSearchResult, StatusInfo, MultiFeatureVectorForSearch
+from model import FeatureVectorForUpdate, SingleFeatureVectorForSearch, FeatureVectorSearchResult, StatusInfo, MultiFeatureVectorForSearch, FeatureVectorIdentifier
 from fastapi.encoders import jsonable_encoder
 from fastapi.responses import JSONResponse
 from starlette.middleware.cors import CORSMiddleware
+from middleware import ErrorHandlingMiddleware
 
 import os
 from logging import config
@@ -33,6 +34,7 @@ app = FastAPI(
     title="data-accessor-vald-web",
     version="0.5-SNAPSHOT"
 )
+app.add_middleware(ErrorHandlingMiddleware)
 
 valdAccessor = ValdAccessor()
 app.add_middleware(
@@ -47,7 +49,7 @@ app.add_middleware(
             summary='Registration of feature vectors')
 def insert(featureVectorForUpdate:FeatureVectorForUpdate):
     try:        
-        valdAccessor.insert(featureVectorForUpdate.id, featureVectorForUpdate.vector)        
+        valdAccessor.insert(featureVectorForUpdate)
         return JSONResponse(content=jsonable_encoder(StatusInfo(status="OK", message="")))
     except Exception as e:
         LOG.error(traceback.format_exc())
@@ -56,7 +58,7 @@ def insert(featureVectorForUpdate:FeatureVectorForUpdate):
             summary='Registering and updating feature vectors')
 def insert(featureVectorForUpdate:FeatureVectorForUpdate):
     try:        
-        valdAccessor.upsert(featureVectorForUpdate.id,featureVectorForUpdate.vector)
+        valdAccessor.upsert(featureVectorForUpdate)
         return JSONResponse(content=jsonable_encoder(StatusInfo(status="OK", message="")))
     except Exception as e:
         LOG.error(traceback.format_exc())
@@ -66,13 +68,14 @@ def insert(featureVectorForUpdate:FeatureVectorForUpdate):
             summary='Find Single Feature Vector')
 def search(singleFeatureVectorForSearch:SingleFeatureVectorForSearch):
     try:
-        ids, similarities = valdAccessor.search(singleFeatureVectorForSearch.vector, singleFeatureVectorForSearch.num, singleFeatureVectorForSearch.radius, singleFeatureVectorForSearch.epsilon, singleFeatureVectorForSearch.timeout)
+        ids, similarities = valdAccessor.search(singleFeatureVectorForSearch.vector, singleFeatureVectorForSearch.num)
         return JSONResponse(content=jsonable_encoder(FeatureVectorSearchResult(ids = ids, similarities = similarities, statusInfo=StatusInfo(status="OK", message=""))))        
     except Exception as e:
         #Exception occurs when there is no search result for some reason
         LOG.error(traceback.format_exc())
         return JSONResponse(content=jsonable_encoder(FeatureVectorSearchResult(ids=[], similarities=[], statusInfo=StatusInfo(status="ERROR", message=traceback.format_exc()))))
 
+'''
 @app.post("/multiSearch",
             summary='Find Multi Feature Vector')
 def multiSearch(multiFeatureVectorForSearch:MultiFeatureVectorForSearch):
@@ -83,13 +86,13 @@ def multiSearch(multiFeatureVectorForSearch:MultiFeatureVectorForSearch):
         #Exception occurs when there is no search result for some reason
         LOG.error(traceback.format_exc())
         return JSONResponse(content=jsonable_encoder(FeatureVectorSearchResult(ids=[], similarities=[], statusInfo=StatusInfo(status="ERROR", message=traceback.format_exc()))))
-
+'''
 
 @app.post("/delete",
             summary='Delete a Feature Vector')
-def delete(featureVectorId:FeatureVectorId):
+def delete(featureVectorIdentifier: FeatureVectorIdentifier):
     try:
-        valdAccessor.delete(featureVectorId.id)
+        valdAccessor.delete(featureVectorIdentifier)
         return JSONResponse(content=jsonable_encoder(StatusInfo(status="OK", message="")))
     except Exception as e:
         LOG.error(traceback.format_exc())
@@ -97,9 +100,9 @@ def delete(featureVectorId:FeatureVectorId):
 
 @app.post("/searchById",
             summary='Find a Feature Vector by Id')
-def searchById(featureVectorId:FeatureVectorId):
+def searchById(featureVectorIdentifier: FeatureVectorIdentifier):
     try:
-        ids, similarities = valdAccessor.searchById(featureVectorId.id)
+        ids, similarities = valdAccessor.searchById(featureVectorIdentifier)
         return JSONResponse(content=jsonable_encoder(FeatureVectorSearchResult(ids = ids, similarities = similarities, statusInfo=StatusInfo(status="OK", message=""))))
     except Exception as e:
         LOG.error(traceback.format_exc())

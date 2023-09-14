@@ -27,6 +27,7 @@ from logging import config
 config.fileConfig('logging.conf')
 import logging
 import time
+from model import FeatureVectorForUpdate, FeatureVectorIdentifier
 LOG = logging.getLogger(__name__)
 
 class ValdAccessor():
@@ -48,14 +49,16 @@ class ValdAccessor():
         self.rstub = remove_pb2_grpc.RemoveStub(self.channel)
         self.exstub = object_pb2_grpc.ObjectStub(self.channel)
 
-    def insert(self, id, vector):
-        vec = payload_pb2.Object.Vector(id=id, vector=vector)
+    def insert(self, featureVectorForUpdate: FeatureVectorForUpdate):
+        featureVectorIdentifier = featureVectorForUpdate.featureVectorIdentifier
+        id = featureVectorIdentifier.propositionId + "#" + featureVectorIdentifier.lang +"#" + featureVectorIdentifier.featureId +'#' + str(featureVectorIdentifier.sentenceType)
+        vec = payload_pb2.Object.Vector(id=id, vector=featureVectorForUpdate.vector)
         icfg = payload_pb2.Insert.Config(skip_strict_exist_check=True)
         self.istub.Insert(payload_pb2.Insert.Request(vector=vec, config=icfg))
 
-    def upsert(self, id, vector):
-        self.delete(id)      
-        self.insert(id, vector)
+    def upsert(self, featureVectorForUpdate: FeatureVectorForUpdate):               
+        self.delete(featureVectorForUpdate.featureVectorIdentifier)      
+        self.insert(featureVectorForUpdate)
 
         #Something is wrong
         #vec = payload_pb2.Object.Vector(id=id, vector=vector)
@@ -71,12 +74,10 @@ class ValdAccessor():
             result = []
             similarities = []
             for x in res.results:
-                LOG.info(x.id + ": "+ str(x.distance))
-                #if not getattr(x, 'distance'):
-                #    result.append(x.id)
-                #    similarities.append(1.0)
-                if x.distance < float(os.environ["TOPOSOID_VALD_DISTANCE_THRESHHOLD"]) :
-                    result.append(x.id)
+                #LOG.info(x.id + ": "+ str(x.distance))
+                if x.distance < float(os.environ["TOPOSOID_VALD_DISTANCE_THRESHOLD"]) :
+                    identifierInfo = x.id.split("#")
+                    result.append(FeatureVectorIdentifier(propositionId = identifierInfo[0], featureId = identifierInfo[2], sentenceType = int(identifierInfo[3]), lang = identifierInfo[1]))
                     if x.distance == 0:
                         similarities.append(1.0)
                     else:
@@ -84,7 +85,7 @@ class ValdAccessor():
             return result, similarities        
 
             #return list(map(lambda x:  x.id, res.results))
-
+    '''
     def multiSearch(self, vectors, num=20, radius=-1.0, epsilon=0.1, timeout=3000000000):
         scfg = payload_pb2.Search.Config(num=num, radius=radius, epsilon=epsilon, timeout=timeout)        
         reqs = list(map(lambda v: payload_pb2.Search.Request(vector=v.vector, config=scfg), vectors))        
@@ -100,16 +101,17 @@ class ValdAccessor():
                     #if not getattr(y, 'distance'):                        
                     #    result.append(y.id)
                     #    similarities.append(1.0)
-                    if y.distance < float(os.environ["TOPOSOID_VALD_DISTANCE_THRESHHOLD"]) :
+                    if y.distance < float(os.environ["TOPOSOID_VALD_DISTANCE_THRESHOLD"]) :
                         result.append(y.id)
                         if y.distance == 0:
                             similarities.append(1.0)
                         else:
                             similarities.append(1.0 - y.distance)   
             return result, similarities            
-
-    def searchById(self, id):   
+    '''
+    def searchById(self, featureVectorIdentifier: FeatureVectorIdentifier):   
         try:     
+            id = featureVectorIdentifier.propositionId + "#" + featureVectorIdentifier.lang +"#" + featureVectorIdentifier.featureId +'#' + str(featureVectorIdentifier.sentenceType)
             scfg = payload_pb2.Search.Config(num=100, radius=-1, epsilon=0.1, timeout=3000000000)
             res = self.sstub.SearchByID(payload_pb2.Search.IDRequest(id=id, config=scfg))
             if len(res.results) == 0:
@@ -118,15 +120,16 @@ class ValdAccessor():
                 result = []
                 similarities = []
                 if id not in list(map(lambda x: x.id, res.results)): return [], []
-                else: return [id], [1.0]
+                else: return [featureVectorIdentifier], [1.0]
         except Exception as e:
             pass
             return [],[]
 
 
-    def delete(self, id): 
+    def delete(self, featureVectorIdentifier: FeatureVectorIdentifier): 
         try:
             i = 0
+            id = featureVectorIdentifier.propositionId + "#" + featureVectorIdentifier.lang +"#" + featureVectorIdentifier.featureId +'#' + str(featureVectorIdentifier.sentenceType)
             while(self.exstub.Exists(payload_pb2.Object.ID(id=id))):
                 rcfg = payload_pb2.Remove.Config(skip_strict_exist_check=True)
                 rid = payload_pb2.Object.ID(id=id)

@@ -14,18 +14,83 @@
   limitations under the License.
  '''
 
-from pydantic import BaseModel
+from pydantic import BaseModel, ValidationError, validator
 from typing import List
+import logging
+LOG = logging.getLogger(__name__)
+
+
+class FeatureVectorIdentifier(BaseModel):
+    propositionId:str
+    featureId:str
+    sentenceType:int
+    lang:str
+
+    @validator("propositionId", pre=True)
+    def parsePropositionId(cls, v):
+        if not isinstance(v, str):
+            logging.error("propositionId is not StringType.") 
+            raise ValidationError("propositionId is not StringType.")
+        return v
+
+    @validator("featureId", pre=True)
+    def parseFeatureId(cls, v):
+        if not isinstance(v, str):
+            logging.error("featureId is not StringType.")
+            raise ValidationError("featureId is not StringType.")
+        return v
+
+    @validator("sentenceType", pre=True)
+    def parseSentenceType(cls, v):
+        if not isinstance(v, int):
+            logging.error("sentenceType is not IntType.")
+            raise ValidationError("sentenceType is not IntType.")
+        return v
+
+    @validator("lang", pre=True)
+    def parseLang(cls, v):
+        if not isinstance(v, str):
+            logging.error("lang is not StringType.")
+            raise ValidationError("lang is not StringType.")
+        return v
+
+
+    @validator("propositionId")
+    def isNotEmptyPropositionId(cls, v):
+        if not v:
+            logging.error("propositionId is empty.")
+            raise ValidationError("propositionId is empty.")
+        return v
+
+    @validator("featureId")
+    def isNotEmptyFeatureId(cls, v):
+        if not v:
+            logging.error("featureId is empty.")
+            raise ValidationError("featureId is empty.")
+        return v
+
+    @validator("sentenceType")
+    def isNotEmptySentenceType(cls, v):
+        if v > 2 or v < 0:
+            logging.error("sentenceType is invalid.")
+            raise ValidationError("sentenceType is invalid.")
+        return v
+
+    @validator("lang")
+    def isNotEmptyLang(cls, v):
+        if not v:
+            logging.error("lang is empty.")
+            raise ValidationError("lang is empty.")
+        if v not in ["ja_JP", "en_US"]:
+            logging.error("lang is invalid.")
+            raise ValidationError("lang is invalid.")
+        return v
 
 
 #For searching feature vectors.
 class FeatureVectorForUpdate(BaseModel):
-    id:str
+    featureVectorIdentifier: FeatureVectorIdentifier
     vector:List[float]
-
-#For deleting feature vectors
-class FeatureVectorId(BaseModel):
-    id:str
 
 #For searching feature vectors.
 class FeatureVectorForSearch(BaseModel):
@@ -35,17 +100,11 @@ class FeatureVectorForSearch(BaseModel):
 class SingleFeatureVectorForSearch(BaseModel):
     vector:List[float]
     num:int
-    radius:float
-    epsilon:float
-    timeout:int
 
 #For feature vector search requests. Multiple vectors can be set.
 class MultiFeatureVectorForSearch(BaseModel):
     vectors:List[FeatureVectorForSearch]
     num:int
-    radius:float
-    epsilon:float
-    timeout:int
 
 #Status Information
 class StatusInfo(BaseModel):
@@ -54,6 +113,6 @@ class StatusInfo(BaseModel):
 
 #For feature vector search results
 class FeatureVectorSearchResult(BaseModel):
-    ids:List[str]
+    ids:List[FeatureVectorIdentifier]
     similarities:List[float]
     statusInfo:StatusInfo
