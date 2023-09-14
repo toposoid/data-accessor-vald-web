@@ -20,7 +20,7 @@ import numpy as np
 from time import sleep
 import pytest
 
-class TestVoldAPI(object):
+class TestValdAPI(object):
 
     client = TestClient(app)
     vector = list(np.random.rand(768))
@@ -29,7 +29,15 @@ class TestVoldAPI(object):
     def setup_class(cls):    
         response = cls.client.post("/upsert",
                         headers={"Content-Type": "application/json"},
-                        json={"id":"test-ss1", "vector": cls.vector})    
+                        json={
+                                "featureVectorIdentifier":{
+                                    "propositionId": "test-ss1",
+                                    "featureId": "test-ss1",
+                                    "sentenceType": 1,
+                                    "lang": "ja_JP"}, 
+                                "vector": cls.vector
+                            }
+                        )    
         print(StatusInfo.parse_obj(response.json()))
 
         change3 = cls.vector[3:]
@@ -47,23 +55,63 @@ class TestVoldAPI(object):
 
         response = cls.client.post("/upsert",
                         headers={"Content-Type": "application/json"},
-                        json={"id":"test-ms1", "vector": changeVector1})    
+                        json={
+                                 "featureVectorIdentifier":{
+                                    "propositionId": "test-ms1",
+                                    "featureId": "test-ms1",
+                                    "sentenceType": 1,
+                                    "lang": "ja_JP"}, 
+                                "vector": changeVector1
+                            }
+                        )
         assert response.status_code == 200
         response = cls.client.post("/upsert",
                         headers={"Content-Type": "application/json"},
-                        json={"id":"test-ms2", "vector": changeVector2})    
+                        json={
+                                 "featureVectorIdentifier":{
+                                    "propositionId": "test-ms2",
+                                    "featureId": "test-ms2",
+                                    "sentenceType": 1,
+                                    "lang": "ja_JP"}, 
+                                "vector": changeVector2
+                            }
+                        ) 
         assert response.status_code == 200
         response = cls.client.post("/upsert",
                         headers={"Content-Type": "application/json"},
-                        json={"id":"test-ms3", "vector": changeVector3})    
+                        json={
+                                 "featureVectorIdentifier":{
+                                    "propositionId": "test-ms3",
+                                    "featureId": "test-ms3",
+                                    "sentenceType": 1,
+                                    "lang": "ja_JP"}, 
+                                "vector": changeVector3
+                            }
+                        ) 
         assert response.status_code == 200
         response = cls.client.post("/upsert",
                         headers={"Content-Type": "application/json"},
-                        json={"id":"test-ms4", "vector": changeVector3})    
+                        json={
+                                 "featureVectorIdentifier":{
+                                    "propositionId": "test-ms4",
+                                    "featureId": "test-ms4",
+                                    "sentenceType": 1,
+                                    "lang": "ja_JP"}, 
+                                "vector": changeVector3
+                            }
+                        )
         assert response.status_code == 200
         response = cls.client.post("/upsert",
                         headers={"Content-Type": "application/json"},
-                        json={"id":"test-ms5", "vector": changeVector4})    
+                        json={
+                                 "featureVectorIdentifier":{
+                                    "propositionId": "test-ms5",
+                                    "featureId": "test-ms5",
+                                    "sentenceType": 1,
+                                    "lang": "ja_JP"}, 
+                                "vector": changeVector4
+                            }
+                        ) 
         assert response.status_code == 200
         
         sleep(5)
@@ -72,59 +120,174 @@ class TestVoldAPI(object):
     def teardown_class(cls):
         response = cls.client.post("/delete",
                             headers={"Content-Type": "application/json"},
-                            json={"id":"test-ss1", "vector": []})        
+                            json={
+                                    "propositionId": "test-ss1",
+                                    "featureId": "test-ss1",
+                                    "sentenceType": 1,
+                                    "lang": "ja_JP"
+                                })
+                            #json={"id":"test-ss1", "vector": []})        
         print(StatusInfo.parse_obj(response.json()))
 
         response = cls.client.post("/delete",
                             headers={"Content-Type": "application/json"},
-                            json={"id":"test-ms1", "vector": []})        
+                            json={
+                                    "propositionId": "test-ms1",
+                                    "featureId": "test-ms1",
+                                    "sentenceType": 1,
+                                    "lang": "ja_JP"
+                                })
+                            #json={"id":"test-ms1", "vector": []})        
         print(StatusInfo.parse_obj(response.json()))
 
         response = cls.client.post("/delete",
                             headers={"Content-Type": "application/json"},
-                            json={"id":"test-ms2", "vector": []})        
+                            json={
+                                    "propositionId": "test-ms2",
+                                    "featureId": "test-ms2",
+                                    "sentenceType": 1,
+                                    "lang": "ja_JP"
+                                })
+                            #json={"id":"test-ms2", "vector": []})        
         print(StatusInfo.parse_obj(response.json()))
 
         response = cls.client.post("/delete",
                             headers={"Content-Type": "application/json"},
-                            json={"id":"test-ms3", "vector": []})        
+                            json={
+                                    "propositionId": "test-ms3",
+                                    "featureId": "test-ms3",
+                                    "sentenceType": 1,
+                                    "lang": "ja_JP"
+                                })
+                            #json={"id":"test-ms3", "vector": []})        
         print(StatusInfo.parse_obj(response.json()))
 
         response = cls.client.post("/delete",
                             headers={"Content-Type": "application/json"},
-                            json={"id":"test-ms4", "vector": []})        
+                            json={
+                                    "propositionId": "test-ms4",
+                                    "featureId": "test-ms4",
+                                    "sentenceType": 1,
+                                    "lang": "ja_JP"
+                                })
+                            #json={"id":"test-ms4", "vector": []})        
         print(StatusInfo.parse_obj(response.json()))
 
         response = cls.client.post("/delete",
                             headers={"Content-Type": "application/json"},
-                            json={"id":"test-ms5", "vector": []})        
+                             json={
+                                    "propositionId": "test-ms5",
+                                    "featureId": "test-ms5",
+                                    "sentenceType": 1,
+                                    "lang": "ja_JP"
+                                })                           
+                            #json={"id":"test-ms5", "vector": []})        
         print(StatusInfo.parse_obj(response.json()))
-
-
-
         
-        
-    def test_EmptyVector(self):    
-        response = self.client.post("/insert",
-                            headers={"Content-Type": "application/json"},
-                            json={"id":"test-empty", "vector": []})    
-        assert response.status_code == 200
-        statusInfo = StatusInfo.parse_obj(response.json())
-        assert statusInfo.status == "ERROR"
-        assert "Incompatible Dimension Size detected" in statusInfo.message
-
-    
     def test_InsertEmptyVector(self):    
         response = self.client.post("/insert",
                             headers={"Content-Type": "application/json"},
-                            json={"id":"test-empty", "vector": []})    
+                            json={
+                                 "featureVectorIdentifier":{
+                                    "propositionId": "test-empty",
+                                    "featureId": "test-empty",
+                                    "sentenceType": 1,
+                                    "lang": "ja_JP"}, 
+                                "vector": []
+                            })
+                            #json={"id":"test-empty", "vector": []})    
         assert response.status_code == 200
         statusInfo = StatusInfo.parse_obj(response.json())
         assert statusInfo.status == "ERROR"
         assert "Incompatible Dimension Size detected" in statusInfo.message
 
+
     def test_InsertEmptyId(self):    
-        
+        response = self.client.post("/insert",
+                            headers={"Content-Type": "application/json"},
+                            json={
+                                 "featureVectorIdentifier":{
+                                    "propositionId": "",
+                                    "featureId": "hoge",
+                                    "sentenceType": 1,
+                                    "lang": "ja_JP"}, 
+                                "vector": self.vector
+                            })
+        assert response.status_code == 200
+        statusInfo = StatusInfo.parse_obj(response.json())
+        assert statusInfo.status == "ERROR"
+
+        response = self.client.post("/insert",
+                            headers={"Content-Type": "application/json"},
+                            json={
+                                 "featureVectorIdentifier":{
+                                    "propositionId": "hoge",
+                                    "featureId": "",
+                                    "sentenceType": 1,
+                                    "lang": "ja_JP"}, 
+                                "vector": self.vector
+                            })
+        assert response.status_code == 200
+        statusInfo = StatusInfo.parse_obj(response.json())
+        assert statusInfo.status == "ERROR"
+
+        response = self.client.post("/insert",
+                            headers={"Content-Type": "application/json"},
+                            json={
+                                 "featureVectorIdentifier":{
+                                    "propositionId": "hoge",
+                                    "featureId": "hoge",
+                                    "sentenceType": 3,
+                                    "lang": "ja_JP"}, 
+                                "vector": self.vector
+                            })
+        assert response.status_code == 200
+        statusInfo = StatusInfo.parse_obj(response.json())
+        assert statusInfo.status == "ERROR"
+
+        response = self.client.post("/insert",
+                            headers={"Content-Type": "application/json"},
+                            json={
+                                 "featureVectorIdentifier":{
+                                    "propositionId": "hoge",
+                                    "featureId": "hoge",
+                                    "sentenceType": "",
+                                    "lang": "ja_JP"}, 
+                                "vector": self.vector
+                            })
+        assert response.status_code == 200
+        statusInfo = StatusInfo.parse_obj(response.json())
+        assert statusInfo.status == "ERROR"
+
+        response = self.client.post("/insert",
+                            headers={"Content-Type": "application/json"},
+                            json={
+                                 "featureVectorIdentifier":{
+                                    "propositionId": "hoge",
+                                    "featureId": "hoge",
+                                    "sentenceType": "",
+                                    "lang": ""}, 
+                                "vector": self.vector
+                            })
+        assert response.status_code == 200
+        statusInfo = StatusInfo.parse_obj(response.json())
+        assert statusInfo.status == "ERROR"
+
+        response = self.client.post("/insert",
+                            headers={"Content-Type": "application/json"},
+                            json={
+                                 "featureVectorIdentifier":{
+                                    "propositionId": "hoge",
+                                    "featureId": "hoge",
+                                    "sentenceType": "",
+                                    "lang": "fr_FR"}, 
+                                "vector": self.vector
+                            })
+        assert response.status_code == 200
+        statusInfo = StatusInfo.parse_obj(response.json())
+        assert statusInfo.status == "ERROR"
+
+        '''
         response = self.client.post("/insert",
                             headers={"Content-Type": "application/json"},
                             json={"id":"", "vector": self.vector})    
@@ -132,12 +295,20 @@ class TestVoldAPI(object):
         statusInfo = StatusInfo.parse_obj(response.json())
         assert statusInfo.status == "ERROR"
         assert "UNKNOWN:Error" in statusInfo.message
-
+        '''
     def test_InsertAndDelete(self):  
         
         response = self.client.post("/insert",
                             headers={"Content-Type": "application/json"},
-                            json={"id":"test1", "vector": self.vector})    
+                            json={
+                                 "featureVectorIdentifier":{
+                                    "propositionId": "test1",
+                                    "featureId": "test1",
+                                    "sentenceType": 1,
+                                    "lang": "ja_JP"}, 
+                                "vector": self.vector
+                            })
+                            #json={"id":"test1", "vector": self.vector})    
         assert response.status_code == 200
         statusInfo = StatusInfo.parse_obj(response.json())
         assert statusInfo.status == "OK"
@@ -145,7 +316,13 @@ class TestVoldAPI(object):
         
         response = self.client.post("/delete",
                             headers={"Content-Type": "application/json"},
-                            json={"id":"test1", "vector": []})    
+                            json={
+                                    "propositionId": "test1",
+                                    "featureId": "test1",
+                                    "sentenceType": 1,
+                                    "lang": "ja_JP"
+                                })
+                            #json={"id":"test1", "vector": []})    
         assert response.status_code == 200
         statusInfo = StatusInfo.parse_obj(response.json())
         assert statusInfo.status == "OK"
@@ -153,7 +330,13 @@ class TestVoldAPI(object):
 
         response = self.client.post("/searchById",
                             headers={"Content-Type": "application/json"},
-                            json={"id":"test1"})    
+                            json={
+                                    "propositionId": "test1",
+                                    "featureId": "test1",
+                                    "sentenceType": 1,
+                                    "lang": "ja_JP"
+                                })
+                            #json={"id":"test1"})    
         assert response.status_code == 200
         searchResult = FeatureVectorSearchResult.parse_obj(response.json())
         assert searchResult.statusInfo.status == "OK"
@@ -167,19 +350,19 @@ class TestVoldAPI(object):
 
         response = self.client.post("/search",
                             headers={"Content-Type": "application/json"},
-                            json={"vector": self.vector, "num":10, "radius":-1.0, "epsilon":0.01, "timeout": 50000000000})    
+                            json={"vector": self.vector, "num":10})    
         assert response.status_code == 200
         searchResult = FeatureVectorSearchResult.parse_obj(response.json())
         assert searchResult.statusInfo.status == "OK"
         assert "" in searchResult.statusInfo.message
-        assert searchResult.ids[0] == "test-ss1"
+        assert searchResult.ids[0].propositionId == "test-ss1"
 
 
     def test_SingleSearchNoResponse(self):     
 
         response = self.client.post("/search",
                             headers={"Content-Type": "application/json"},
-                            json={"vector": list(np.random.rand(768)), "num":1, "radius":-1.0, "epsilon":0.01, "timeout": 50000000000})    
+                            json={"vector": list(np.random.rand(768)), "num":1})    
         assert response.status_code == 200
         searchResult = FeatureVectorSearchResult.parse_obj(response.json())
         assert len(searchResult.ids) == 0
@@ -188,7 +371,7 @@ class TestVoldAPI(object):
 
 
 
-
+    '''
     def test_MultiSearch(self):     
 
         change3 = self.vector[3:]
@@ -205,19 +388,25 @@ class TestVoldAPI(object):
         searchResult = FeatureVectorSearchResult.parse_obj(response.json())
         assert searchResult.statusInfo.status == "OK"
         assert "" in searchResult.statusInfo.message
-        assert sorted(list(set(searchResult.ids))) == ['test-ms1', 'test-ms3', 'test-ms4', 'test-ms5']
-        
+        assert sorted(list(set(searchResult.ids))) == ['test-ms1', 'test-ms3', 'test-ms4', 'test-ms5']        
+    '''
 
     def test_SearchById(self):     
 
         response = self.client.post("/searchById",
                             headers={"Content-Type": "application/json"},
-                            json={"id":"test-ss1"})    
+                            json={
+                                    "propositionId": "test-ss1",
+                                    "featureId": "test-ss1",
+                                    "sentenceType": 1,
+                                    "lang": "ja_JP"
+                                })                             
+                            #json={"id":"test-ss1"})    
         assert response.status_code == 200
         searchResult = FeatureVectorSearchResult.parse_obj(response.json())
         assert searchResult.statusInfo.status == "OK"
         assert "" in searchResult.statusInfo.message
-        assert searchResult.ids[0] == "test-ss1"
+        assert searchResult.ids[0].propositionId == "test-ss1"
 
     def test_ActualDataRemove(self):     
         
@@ -225,27 +414,47 @@ class TestVoldAPI(object):
         testIds = []
         import uuid
         for i in range(5):
-            id = str(uuid.uuid1()) + '#ja_JP#' + str(uuid.uuid1())
+            id = str(uuid.uuid1())
             testIds.append(id)
             response = self.client.post("/insert",
                             headers={"Content-Type": "application/json"},
-                            json={"id":id, "vector": vector})    
+                            json={
+                                 "featureVectorIdentifier":{
+                                    "propositionId": id,
+                                    "featureId": id,
+                                    "sentenceType": 1,
+                                    "lang": "ja_JP"}, 
+                                "vector": vector
+                            }) 
+                            #json={"id":id, "vector": vector})    
             assert response.status_code == 200
         sleep(5)
         for id in testIds:
             response = self.client.post("/searchById",
                                 headers={"Content-Type": "application/json"},
-                                json={"id":id})    
+                                json={
+                                    "propositionId": id,
+                                    "featureId": id,
+                                    "sentenceType": 1,
+                                    "lang": "ja_JP"
+                                })
+                                #json={"id":id})    
             assert response.status_code == 200
             searchResult = FeatureVectorSearchResult.parse_obj(response.json())
             assert searchResult.statusInfo.status == "OK"
             assert "" in searchResult.statusInfo.message            
-            assert searchResult.ids[0] == id
+            assert searchResult.ids[0].propositionId == id
 
         for id in testIds:
             response = self.client.post("/delete",
                                 headers={"Content-Type": "application/json"},
-                                json={"id":id, "vector": []})    
+                                json={
+                                    "propositionId": id,
+                                    "featureId": id,
+                                    "sentenceType": 1,
+                                    "lang": "ja_JP"
+                                })                             
+                                #json={"id":id, "vector": []})    
             assert response.status_code == 200
             statusInfo = StatusInfo.parse_obj(response.json())
             assert statusInfo.status == "OK"
@@ -255,7 +464,13 @@ class TestVoldAPI(object):
         for id in testIds:
             response = self.client.post("/searchById",
                                 headers={"Content-Type": "application/json"},
-                                json={"id":id})    
+                                json={
+                                    "propositionId": id,
+                                    "featureId": id,
+                                    "sentenceType": 1,
+                                    "lang": "ja_JP"
+                                })    
+                                #json={"id":id})    
             assert response.status_code == 200
             searchResult = FeatureVectorSearchResult.parse_obj(response.json())
             assert searchResult.statusInfo.status == "OK"

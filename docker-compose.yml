@@ -13,7 +13,7 @@ services:
     environment:
       - TOPOSOID_VALD_HOST=172.30.0.3
       - TOPOSOID_VALD_PORT=8081
-      - TOPOSOID_VALD_DISTANCE_THRESHHOLD=0.0001
+      - TOPOSOID_VALD_DISTANCE_THRESHOLD=0.0001
     networks:
       app_net:
         ipv4_address: 172.30.0.2
